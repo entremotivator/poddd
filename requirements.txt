@@ -1,7 +1,7 @@
 streamlit
 numpy
 pydub
-streamlit-audiorec==0.0.7
+streamlit-audiorecorder
 librosa==0.10.0.post2
 matplotlib
 noisereduce
