@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 from pydub import AudioSegment
-from streamlit-audiorecorder import st_audiorec
+from streamlit_audiorecorder import st_audiorec
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
@@ -195,23 +195,20 @@ if audio_bytes:
     project_name = st.text_input("Enter project name:")
     if st.button("Save Project"):
         project_data = {
-            "audio_bytes": audio_bytes.hex(),
-            "start_time": start_time,
-            "end_time": end_time,
-            "low_cut": low_cut,
-            "high_cut": high_cut,
-            "threshold": threshold,
-            "ratio": ratio,
-            "reverb_amount": reverb_amount,
-            "prop_decrease": prop_decrease,
-            "pitch_factor": pitch_factor,
-            "speed_factor": speed_factor,
+            "audio_bytes": audio_bytes,
+            "trim": (start_time, end_time),
+            "eq": (low_cut, high_cut),
+            "compression": (threshold, ratio),
+            "reverb": reverb_amount,
+            "pitch_speed": (pitch_factor, speed_factor),
+            "crossfade": crossfade_duration,
+            "keyframes": keyframe_list
         }
         save_project(project_data, filename=f"{project_name}.json")
     
     # Load project
-    project_file = st.file_uploader("Load Project", type=["json"])
-    if project_file:
-        project_data = load_project(project_file.name)
-        if project_data:
-            st.write(f"Loaded project: {project_file.name}")
+    loaded_project = st.file_uploader("Load a Project", type=["json"])
+    if loaded_project:
+        loaded_data = json.load(loaded_project)
+        st.write("Loaded project data:", loaded_data)
+
