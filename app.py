@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 from pydub import AudioSegment
-from streamlit_audiorec import st_audiorec
+from streamlit-audiorecorder import st_audiorec
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
