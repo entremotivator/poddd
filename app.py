@@ -27,9 +27,28 @@ data = {
 # Convert data to DataFrame
 df = pd.DataFrame(data)
 
-# Editable DataFrame using st.experimental_data_editor (new feature in Streamlit)
+# Editable DataFrame using input fields
 st.subheader("Editable Cleaning Schedule")
-editable_df = st.experimental_data_editor(df, num_rows="dynamic")
+cleaning_schedule = []
+
+# Create input fields for each row in the original DataFrame
+for index, row in df.iterrows():
+    st.write(f"### Entry {index + 1}")
+    date = st.text_input(f"Date:", value=row['Date'], key=f"date_{index}")
+    cleaning_type = st.selectbox(f"Type of Cleaning:", options=["CI", "CO/CI 11am-3pm", "FU", "DC"], index=["CI", "CO/CI 11am-3pm", "FU", "DC"].index(row['Type of Cleaning']), key=f"type_{index}")
+    villa_number = st.number_input(f"Villa Number:", value=row['Villa Number'], key=f"villa_{index}")
+    pax = st.text_input(f"#pax:", value=row['#pax'], key=f"pax_{index}")
+    laundry = st.text_input(f"Laundry:", value=row['Laundry'], key=f"laundry_{index}")
+    comments = st.text_area(f"Comments/ Requests:", value=row['Comments/ Requests'], key=f"comments_{index}")
+    
+    cleaning_schedule.append({
+        "Date": date,
+        "Type of Cleaning": cleaning_type,
+        "Villa Number": villa_number,
+        "#pax": pax,
+        "Laundry": laundry,
+        "Comments/ Requests": comments
+    })
 
 # Section for Additional Inputs
 st.markdown("### Service Options")
@@ -84,17 +103,17 @@ additional_comments = st.text_area("Comments/Requests", "Please add any addition
 
 # Button to download CSV file
 if st.button("Export to CSV"):
-    # Combine the editable DataFrame and the summary into one exportable DataFrame
+    # Combine the editable schedule with summary data into one exportable DataFrame
     export_data = {
-        "Date": editable_df['Date'],
-        "Type of Cleaning": editable_df['Type of Cleaning'],
-        "Villa Number": editable_df['Villa Number'],
-        "Amenities Provided": ["Yes" if amenities else "No"] * len(editable_df),
-        "Laundry Services": ["Yes" if laundry_services else "No"] * len(editable_df),
-        "Keys Available": ["Yes" if keys else "No"] * len(editable_df),
-        "Cleaning Type": [selected_cleaning] * len(editable_df),
-        "Welcome Package Items": [', '.join(selected_package_items) if selected_package_items else "None"] * len(editable_df),
-        "Additional Comments": [additional_comments] * len(editable_df)
+        "Date": [entry['Date'] for entry in cleaning_schedule],
+        "Type of Cleaning": [entry['Type of Cleaning'] for entry in cleaning_schedule],
+        "Villa Number": [entry['Villa Number'] for entry in cleaning_schedule],
+        "Amenities Provided": ["Yes" if amenities else "No"] * len(cleaning_schedule),
+        "Laundry Services": ["Yes" if laundry_services else "No"] * len(cleaning_schedule),
+        "Keys Available": ["Yes" if keys else "No"] * len(cleaning_schedule),
+        "Cleaning Type": [selected_cleaning] * len(cleaning_schedule),
+        "Welcome Package Items": [', '.join(selected_package_items) if selected_package_items else "None"] * len(cleaning_schedule),
+        "Additional Comments": [additional_comments] * len(cleaning_schedule)
     }
     
     export_df = pd.DataFrame(export_data)
