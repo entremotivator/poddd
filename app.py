@@ -200,15 +200,14 @@ if audio_bytes:
             "eq": (low_cut, high_cut),
             "compression": (threshold, ratio),
             "reverb": reverb_amount,
+            "noise_reduction": prop_decrease,
             "pitch_speed": (pitch_factor, speed_factor),
-            "crossfade": crossfade_duration,
-            "keyframes": keyframe_list
         }
-        save_project(project_data, filename=f"{project_name}.json")
+        save_project(project_data, f"{project_name}.json")
     
     # Load project
-    loaded_project = st.file_uploader("Load a Project", type=["json"])
-    if loaded_project:
-        loaded_data = json.load(loaded_project)
-        st.write("Loaded project data:", loaded_data)
-
+    project_to_load = st.text_input("Enter project name to load:")
+    if st.button("Load Project"):
+        project = load_project(f"{project_to_load}.json")
+        if project:
+            st.write(project)
